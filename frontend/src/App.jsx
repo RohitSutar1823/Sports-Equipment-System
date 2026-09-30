@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -11,6 +11,32 @@ import LectureSchedule from './pages/LectureSchedule';
 import Students from './pages/Students';
 
 export default function App() {
+  // Automatically attach data-label attributes from <th> headers to <td> cells
+  // so all data tables transform into accessible labeled cards on mobile screens
+  useEffect(() => {
+    const syncTableLabels = () => {
+      document.querySelectorAll('.data-table').forEach((table) => {
+        const headers = Array.from(table.querySelectorAll('thead th')).map((th) =>
+          th.textContent.trim()
+        );
+        table.querySelectorAll('tbody tr').forEach((row) => {
+          const cells = row.querySelectorAll('td');
+          if (cells.length === 1 && cells[0].classList.contains('empty-cell')) return;
+          cells.forEach((td, idx) => {
+            if (headers[idx] && td.getAttribute('data-label') !== headers[idx]) {
+              td.setAttribute('data-label', headers[idx]);
+            }
+          });
+        });
+      });
+    };
+
+    syncTableLabels();
+    const observer = new MutationObserver(syncTableLabels);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Router>
       <div className="app-shell">
