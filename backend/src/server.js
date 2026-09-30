@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables
+// Load environment variables from backend or root folder
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
 // Initialize Express app
@@ -47,7 +50,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Sports Equipment Management API is running smoothly.' });
 });
 
-const path = require('path');
 const fs = require('fs');
 
 // Serve static frontend build if available
